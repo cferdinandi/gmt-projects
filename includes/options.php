@@ -25,7 +25,7 @@
 		$options = projects_get_theme_options();
 		?>
 		<input type="text" name="projects_theme_options[page_slug]" id="page_slug" value="<?php echo esc_attr( $options['page_slug'] ); ?>" />
-		<label class="description" for="page_slug"><?php _e( 'The events page slug', 'projects' ); ?></label>
+		<label class="description" for="page_slug"><?php _e( 'The projects page slug', 'projects' ); ?></label>
 		<?php
 	}
 
@@ -33,15 +33,15 @@
 		$options = projects_get_theme_options();
 		?>
 		<input type="text" name="projects_theme_options[page_title]" id="page_title" value="<?php echo esc_attr( $options['page_title'] ); ?>" />
-		<label class="description" for="page_title"><?php _e( 'The events archive page title', 'projects' ); ?></label>
+		<label class="description" for="page_title"><?php _e( 'The projects archive page title', 'projects' ); ?></label>
 		<?php
 	}
 
 	function projects_settings_field_page_text() {
 		$options = projects_get_theme_options();
 		?>
-		<textarea class="large-text" name="projects_theme_options[page_text]" id="page_text" cols="50" rows="10"><?php stripslashes( esc_textarea( projects_get_jetpack_markdown( $options, 'page_text' ) ) ); ?></textarea>
-		<label class="description" for="page_text"><?php _e( 'The events archive page text', 'projects' ); ?></label>
+		<textarea class="large-text" name="projects_theme_options[page_text]" id="page_text" cols="50" rows="10"><?php echo stripslashes( esc_textarea( projects_get_jetpack_markdown( $options, 'page_text' ) ) ); ?></textarea>
+		<label class="description" for="page_text"><?php _e( 'The projects archive page text', 'projects' ); ?></label>
 		<?php
 	}
 
