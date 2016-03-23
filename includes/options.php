@@ -174,7 +174,6 @@
 		add_settings_field( 'page_title', __( 'Page Title', 'projects' ), 'projects_settings_field_page_title', 'projects_options', 'general' );
 		add_settings_field( 'page_text', __( 'Page Text', 'projects' ), 'projects_settings_field_page_text', 'projects_options', 'general' );
 		add_settings_field( 'thumbnail_class', __( 'Thumbnail Class', 'projects' ), 'projects_settings_field_thumbnail_class', 'projects_options', 'individual' );
-		add_settings_field( 'icon_class', __( 'Icon Class', 'projects' ), 'projects_settings_field_icon_class', 'projects_options', 'individual' );
 		add_settings_field( 'call_to_action', __( 'Call to Action', 'projects' ), 'projects_settings_field_call_to_action', 'projects_options', 'individual' );
 	}
 	add_action( 'admin_init', 'projects_theme_options_init' );
