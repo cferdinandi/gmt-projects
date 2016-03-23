@@ -40,7 +40,7 @@
 	function projects_settings_field_page_text() {
 		$options = projects_get_theme_options();
 		?>
-		<textarea class="large-text" name="projects_theme_options[page_text]" id="page_text" cols="50" rows="10"><?php stripslashes( esc_textarea( projects_get_jetpack_markdown( $options, 'page_text' ) ) ); ?></textarea>
+		<textarea class="large-text" name="projects_theme_options[page_text]" id="page_text" cols="50" rows="10"><?php echo stripslashes( esc_textarea( projects_get_jetpack_markdown( $options, 'page_text' ) ) ); ?></textarea>
 		<label class="description" for="page_text"><?php _e( 'The events archive page text', 'projects' ); ?></label>
 		<?php
 	}
