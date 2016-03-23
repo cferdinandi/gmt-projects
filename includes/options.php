@@ -40,8 +40,24 @@
 	function projects_settings_field_page_text() {
 		$options = projects_get_theme_options();
 		?>
-		<textarea class="large-text" name="projects_theme_options[page_text]" id="page_text" cols="50" rows="10"><?php esc_textarea( projects_get_jetpack_markdown( $options, 'page_text' ) ); ?></textarea>
+		<textarea class="large-text" name="projects_theme_options[page_text]" id="page_text" cols="50" rows="10"><?php stripslashes( esc_textarea( projects_get_jetpack_markdown( $options, 'page_text' ) ) ); ?></textarea>
 		<label class="description" for="page_text"><?php _e( 'The events archive page text', 'projects' ); ?></label>
+		<?php
+	}
+
+	function projects_settings_field_thumbnail_class() {
+		$options = projects_get_theme_options();
+		?>
+		<input type="text" name="projects_theme_options[thumbnail_class]" class="regular-text" id="thumbnail_class" value="<?php echo esc_attr( $options['thumbnail_class'] ); ?>" />
+		<label class="description" for="thumbnail_class"><?php _e( 'Class for project thumbnail images', 'projects' ); ?></label>
+		<?php
+	}
+
+	function projects_settings_field_call_to_action() {
+		$options = projects_get_theme_options();
+		?>
+		<textarea class="large-text" name="projects_theme_options[call_to_action]" id="call_to_action" cols="50" rows="10"><?php echo stripslashes( esc_textarea( projects_get_jetpack_markdown( $options, 'call_to_action' ) ) ); ?></textarea>
+		<label class="description" for="call_to_action"><?php _e( 'The call to action at the end of each project', 'projects' ); ?></label>
 		<?php
 	}
 
@@ -61,6 +77,9 @@
 			'page_title' => 'Projects',
 			'page_text' => '',
 			'page_text_markdown' => '',
+			'thumbnail_class' => '',
+			'call_to_action' => '',
+			'call_to_action_markdown' => '',
 		);
 
 		$defaults = apply_filters( 'projects_default_theme_options', $defaults );
@@ -84,6 +103,14 @@
 		if ( isset( $input['page_text'] ) && ! empty( $input['page_text'] ) ) {
 			$output['page_text'] = wp_filter_post_kses( projects_process_jetpack_markdown( $input['page_text'] ) );
 			$output['page_text_markdown'] = wp_filter_post_kses( $input['page_text'] );
+		}
+
+		if ( isset( $input['thumbnail_class'] ) && ! empty( $input['thumbnail_class'] ) )
+			$output['thumbnail_class'] = wp_filter_nohtml_kses( $input['thumbnail_class'] );
+
+		if ( isset( $input['call_to_action'] ) && ! empty( $input['call_to_action'] ) ) {
+			$output['call_to_action'] = wp_filter_post_kses( projects_process_jetpack_markdown( $input['call_to_action'] ) );
+			$output['call_to_action_markdown'] = wp_filter_post_kses( $input['call_to_action'] );
 		}
 
 		return apply_filters( 'projects_theme_options_validate', $output, $input );
@@ -132,7 +159,8 @@
 		// $title - Section title
 		// $callback - // Section callback (we don't want anything)
 		// $page - // Menu slug, used to uniquely identify the page. See projects_theme_options_add_page().
-		add_settings_section( 'general', null,  '__return_false', 'projects_options' );
+		add_settings_section( 'general', __( 'All Projects', 'projects' ),  '__return_false', 'projects_options' );
+		add_settings_section( 'individual', __( 'Individual Projects', 'projects' ),  '__return_false', 'projects_options' );
 
 
 		// Register our individual settings fields
@@ -145,8 +173,9 @@
 		add_settings_field( 'page_slug', __( 'Page Slug', 'projects' ), 'projects_settings_field_page_slug', 'projects_options', 'general' );
 		add_settings_field( 'page_title', __( 'Page Title', 'projects' ), 'projects_settings_field_page_title', 'projects_options', 'general' );
 		add_settings_field( 'page_text', __( 'Page Text', 'projects' ), 'projects_settings_field_page_text', 'projects_options', 'general' );
-		add_settings_field( 'heading_future', __( 'Future Heading', 'projects' ), 'projects_settings_field_heading_future', 'projects_options', 'general' );
-		add_settings_field( 'heading_past', __( 'Past Heading', 'projects' ), 'projects_settings_field_heading_past', 'projects_options', 'general' );
+		add_settings_field( 'thumbnail_class', __( 'Thumbnail Class', 'projects' ), 'projects_settings_field_thumbnail_class', 'projects_options', 'individual' );
+		add_settings_field( 'icon_class', __( 'Icon Class', 'projects' ), 'projects_settings_field_icon_class', 'projects_options', 'individual' );
+		add_settings_field( 'call_to_action', __( 'Call to Action', 'projects' ), 'projects_settings_field_call_to_action', 'projects_options', 'individual' );
 	}
 	add_action( 'admin_init', 'projects_theme_options_init' );
 
