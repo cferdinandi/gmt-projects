@@ -15,8 +15,8 @@
 	 */
 	function projects_metabox_defaults() {
 		return array(
-			'icon' => '',
 			'url' => '',
+			'url_label' => '',
 		);
 	}
 
@@ -29,7 +29,7 @@
 
 		// Variables
 		global $post;
-		$saved = get_post_meta( $post->ID, 'event_details', true );
+		$saved = get_post_meta( $post->ID, 'project_details', true );
 		$defaults = projects_metabox_defaults();
 		$details = wp_parse_args( $saved, $defaults );
 
@@ -44,9 +44,8 @@
 				<br>
 
 				<div>
-					<label for="projects_icon"><?php _e( 'Icon', 'projects' ); ?></label>
-					<input type="text" class="large-text" name="projects[icon]" id="projects_icon" value="<?php echo esc_attr( $details['icon'] ); ?>"><br>
-					<button type="button" class="button" id="projects_icon_upload_btn" data-gmt-projects="#projects_icon"><?php _e( 'Select an Icon', 'projects' )?></button>
+					<label for="projects_url_label"><?php _e( 'URL Label', 'projects' ); ?></label>
+					<input type="text" class="large-text" id="projects_url_label" name="projects[url_label]" value="<?php echo esc_attr( $details['url_label'] ); ?>">
 				</div>
 				<br>
 
@@ -88,11 +87,16 @@
 		// Sanitize all data
 		$sanitized = array();
 		foreach ( $_POST['projects'] as $key => $detail ) {
+			if ( $key === 'description' ) {
+				$sanitized['description'] = wp_filter_post_kses( projects_process_jetpack_markdown( $detail ) );
+				$sanitized['description_markdown'] = wp_filter_post_kses( $detail );
+				continue;
+			}
 			$sanitized[$key] = wp_filter_post_kses( $detail );
 		}
 
 		// Update data in database
-		update_post_meta( $post->ID, 'event_details', $sanitized );
+		update_post_meta( $post->ID, 'project_details', $sanitized );
 
 	}
 	add_action('save_post', 'projects_save_metabox', 1, 2);
@@ -113,14 +117,14 @@
 
 			// Get the data
 			$parent = get_post( $parent_id );
-			$details = get_post_meta( $parent->ID, 'event_details', true );
+			$details = get_post_meta( $parent->ID, 'project_details', true );
 
 			// If data exists, add to revision
 			if ( !empty( $details ) && is_array( $details ) ) {
 				$defaults = projects_metabox_defaults();
 				foreach ( $defaults as $key => $value ) {
 					if ( array_key_exists( $key, $details ) ) {
-						add_metadata( 'post', $post_id, 'event_details_' . $key, $details[$key] );
+						add_metadata( 'post', $post_id, 'project_details_' . $key, $details[$key] );
 					}
 				}
 			}
@@ -147,12 +151,12 @@
 
 		// Update content
 		foreach ( $defaults as $key => $value ) {
-			$detail_revision = get_metadata( 'post', $revision->ID, 'event_details_' . $key, true );
+			$detail_revision = get_metadata( 'post', $revision->ID, 'project_details_' . $key, true );
 			if ( isset( $detail_revision ) ) {
 				$details[$key] = $detail_revision;
 			}
 		}
-		update_post_meta( $post_id, 'event_details', $event_details );
+		update_post_meta( $post_id, 'project_details', $project_details );
 
 	}
 	add_action( 'wp_restore_post_revision', 'projects_restore_revisions', 10, 2 );
@@ -167,7 +171,7 @@
 	function projects_get_revisions_fields( $fields ) {
 		$defaults = projects_metabox_defaults();
 		foreach ( $defaults as $key => $value ) {
-			$fields['event_details_' . $key] = ucfirst( $key );
+			$fields['project_details_' . $key] = ucfirst( $key );
 		}
 		return $fields;
 	}
@@ -185,30 +189,3 @@
 		return get_metadata( 'post', $revision->ID, $field, true );
 	}
 	add_filter( '_wp_post_revision_field_my_meta', 'projects_display_revisions_fields', 10, 2 );
-
-
-
-	/**
-	 * Load required scripts and styles
-	 */
-	function projects_add_scripts( $hook ) {
-
-		// Only run on projects page
-		global $typenow;
-		if ( $typenow !== 'gmt-projects' ) return;
-
-		// Enqueue the media selector
-		wp_enqueue_media();
-
-		// Register and enqueue the required javascript.
-		wp_register_script( 'projects-media', plugin_dir_url( __FILE__ ) . 'gmt-projects.js', array( 'jquery' ) );
-		wp_localize_script( 'projects-media', 'meta_image',
-			array(
-				'title' => __( 'Choose or Upload an Icon', 'projects' ),
-				'button' => __( 'Use this icon', 'projects' ),
-			)
-		);
-		wp_enqueue_script( 'projects-media' );
-
-	}
-	add_action( 'admin_enqueue_scripts', 'projects_add_scripts', 10, 1 );
