@@ -5,7 +5,7 @@
  * Plugin URI: https://github.com/cferdinandi/gmt-projects/
  * GitHub Plugin URI: https://github.com/cferdinandi/gmt-projects/
  * Description: Adds a Projects custom post type.
- * Version: 1.0.1
+ * Version: 1.1.0
  * Author: Chris Ferdinandi
  * Author URI: http://gomakethings.com
  * License: MIT
