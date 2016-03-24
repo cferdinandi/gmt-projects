@@ -33,6 +33,7 @@
 				'excerpt',
 				'thumbnail',
 				'revisions',
+				'page-attributes',
 				'wpcom-markdown',
 			),
 			'has_archive'   => true,
